@@ -2,6 +2,8 @@
 
 A native macOS background removal filter plugin for [OBS Studio](https://obsproject.com/) leveraging Apple Silicon and macOS Vision framework neural network person segmentation (`VNGeneratePersonSegmentationRequest`).
 
+Fork from https://github.com/sebastian-s-beckmann/obs-mac-backgroundremoval   
+
 ---
 
 ## Features
@@ -87,3 +89,8 @@ cp -R build_macos/RelWithDebInfo/obs-mac-backgroundremoval.plugin.dSYM "$HOME/Li
 ## License
 
 GNU General Public License v2.0 or later. 
+
+
+## AI Generated Content Disclosure
+
+Created with Antigravity.
