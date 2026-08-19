@@ -98,6 +98,9 @@ invoke_formatter() {
           log_error "gersemi is not version 0.12.0 or above (found ${gersemi_version[2]}."
           exit 2
         fi
+      } else {
+        log_error "No viable gersemi version found (required 0.12.0 or above)"
+        exit 2
       }
 
       if (( ! #source_files )) source_files=(CMakeLists.txt (cmake)/**/(CMakeLists.txt|*.cmake)(.N))
