@@ -252,9 +252,6 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 				pthread_mutex_unlock(&filter->pixelBufferMutex);
 
 				CVPixelBufferRelease(pixelBufferIn);
-				[empty release];
-				[handler release];
-				[requests release];
 			});
 		}
 	}
@@ -458,11 +455,10 @@ static void vision_destroy(void *filter_ptr)
 	if (filter->mask_queue) {
 		dispatch_sync(filter->mask_queue, ^{
 			      });
-		dispatch_release(filter->mask_queue);
+		filter->mask_queue = nil;
 	}
 
 	if (filter->request) {
-		[filter->request release];
 		filter->request = nil;
 	}
 

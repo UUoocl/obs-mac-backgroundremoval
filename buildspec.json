@@ -32,8 +32,8 @@
     },
     "name": "obs-mac-backgroundremoval",
     "displayName": "OBS Mac Background Removal",
-    "version": "0.2.0",
-    "author": "Sebastian Beckmann",
+    "version": "0.3.0",
+    "author": "Jon Wood",
     "website": "https://github.com/UUoocl/obs-mac-backgroundremoval",
-    "email": "redacted@example.com"
+    "email": "[EMAIL_ADDRESS]"
 }
