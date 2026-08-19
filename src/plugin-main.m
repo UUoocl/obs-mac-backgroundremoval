@@ -22,7 +22,7 @@ with this program. If not, see <https://www.gnu.org/licenses/>
 #include <Vision/Vision.h>
 #include <CoreVideo/CoreVideo.h>
 
-#include "plugin-macros.generated.h"
+#include <plugin-support.h>
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE(PLUGIN_NAME, "en-US")
@@ -514,6 +514,11 @@ bool obs_module_load(void)
 				       .get_properties = vision_properties,
 				       .update = vision_update};
 	obs_register_source(&info);
-	blog(LOG_INFO, "Loaded successfully (version %s)", PLUGIN_VERSION);
+	obs_log(LOG_INFO, "Loaded successfully (version %s)", PLUGIN_VERSION);
 	return true;
+}
+
+void obs_module_unload(void)
+{
+	obs_log(LOG_INFO, "plugin unloaded");
 }
