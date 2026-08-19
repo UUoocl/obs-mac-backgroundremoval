@@ -217,8 +217,8 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
     local -a cmake_args=(
       -DCMAKE_BUILD_TYPE=${BUILD_CONFIG:-RelWithDebInfo}
       -DQT_VERSION=${QT_VERSION}
-      -DCMAKE_PREFIX_PATH="${_plugin_deps};${_obs_build_dir}"
-      -DCMAKE_MODULE_PATH="${_plugin_deps}/cmake;${_obs_build_dir}/cmake;${project_root:h}/obs-studio/cmake"
+      -DCMAKE_PREFIX_PATH="${_plugin_deps};${_obs_build_dir};/opt/homebrew;/usr/local"
+      -DCMAKE_MODULE_PATH="${_plugin_deps}/cmake;${_obs_build_dir}/cmake;${project_root:h}/obs-studio/cmake;/opt/homebrew/share/cmake/Modules;/usr/local/share/cmake/Modules"
     )
 
     if (( _loglevel == 0 )) cmake_args+=(-Wno_deprecated -Wno-dev --log-level=ERROR)
