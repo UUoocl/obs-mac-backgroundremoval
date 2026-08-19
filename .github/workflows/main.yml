@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -33,14 +33,14 @@ jobs:
         run: ./.github/scripts/check-format.sh && ./.github/scripts/check-changes.sh
 
       - name: Install cmake-format
-        run: sudo pip install cmakelang
+        run: sudo pip install --break-system-packages cmakelang || sudo pip install cmakelang
 
       - name: Run cmake-format
         run: ./.github/scripts/check-cmake.sh
 
   macos_build:
     name: 02 - macOS
-    runs-on: macos-12
+    runs-on: macos-14
     strategy:
       fail-fast: true
       matrix:
@@ -58,13 +58,13 @@ jobs:
         shell: zsh {0}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: plugin
           submodules: recursive
 
       - name: Checkout obs-studio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'obsproject/obs-studio'
           path: obs-studio
@@ -110,7 +110,7 @@ jobs:
 
       - name: Restore Compilation Cache
         id: ccache-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.ccache
           key: macos-${{ matrix.arch }}-ccache-plugin-${{ steps.setup.outputs.ccacheDate }}
@@ -165,7 +165,7 @@ jobs:
 
       - name: Upload Build Artifact
         if: ${{ success() && (github.event_name != 'pull_request' || steps.seekingTesters.outputs.found == 'true') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.setup.outputs.pluginName }}-macos-${{ matrix.arch }}-${{ steps.setup.outputs.commitHash }}
           path: ${{ github.workspace }}/plugin/release/${{ steps.setup.outputs.pluginName }}-*-macos-${{ matrix.arch }}.pkg
@@ -182,7 +182,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: plugin
           submodules: recursive
@@ -196,7 +196,7 @@ jobs:
           echo "pluginName=$(jq -r '.name' buildspec.json)" >> $GITHUB_OUTPUT
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Generate Checksums
         run: |
@@ -209,7 +209,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           prerelease: ${{ contains(steps.metadata.outputs.version, 'rc') || contains(steps.metadata.outputs.version, 'beta') }}
@@ -218,3 +218,4 @@ jobs:
           body_path: ${{ github.workspace }}/CHECKSUMS.txt
           files: |
             ${{ github.workspace }}/**/*.pkg
+

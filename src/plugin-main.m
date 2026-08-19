@@ -96,21 +96,17 @@ static void update_pixel_buffer_pool(struct vision_data *filter, uint32_t width,
 		filter->pixelBufferPool = NULL;
 	}
 
-	NSDictionary *poolAttributes = @{
-		(id)kCVPixelBufferPoolMinimumBufferCountKey : @(8)
-	};
+	NSDictionary *poolAttributes = @{(id)kCVPixelBufferPoolMinimumBufferCountKey: @(8)};
 	NSDictionary *pixelBufferAttributes = @{
-		(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-		(id)kCVPixelBufferWidthKey : @(width),
-		(id)kCVPixelBufferHeightKey : @(height),
-		(id)kCVPixelBufferIOSurfacePropertiesKey : @{},
-		(id)kCVPixelBufferMetalCompatibilityKey : @(YES)
+		(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA),
+		(id)kCVPixelBufferWidthKey: @(width),
+		(id)kCVPixelBufferHeightKey: @(height),
+		(id)kCVPixelBufferIOSurfacePropertiesKey: @{},
+		(id)kCVPixelBufferMetalCompatibilityKey: @(YES)
 	};
 
-	CVPixelBufferPoolCreate(kCFAllocatorDefault,
-				(__bridge CFDictionaryRef)poolAttributes,
-				(__bridge CFDictionaryRef)pixelBufferAttributes,
-				&filter->pixelBufferPool);
+	CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)poolAttributes,
+				(__bridge CFDictionaryRef)pixelBufferAttributes, &filter->pixelBufferPool);
 	filter->pool_width = width;
 	filter->pool_height = height;
 }
@@ -188,8 +184,8 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 	enum gs_color_format format = gs_texture_get_color_format(source_texture);
 
 	/* STEP THREE: Stage and dispatch source frame for Vision inference (GPU-backed IOSurface) */
-	if (!filter->cached_stagesurf || filter->stagesurf_width != width ||
-	    filter->stagesurf_height != height || filter->stagesurf_format != format) {
+	if (!filter->cached_stagesurf || filter->stagesurf_width != width || filter->stagesurf_height != height ||
+	    filter->stagesurf_format != format) {
 		if (filter->cached_stagesurf)
 			gs_stagesurface_destroy(filter->cached_stagesurf);
 		filter->cached_stagesurf = gs_stagesurface_create(width, height, format);
@@ -206,8 +202,7 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 
 		CVPixelBufferRef pixelBufferIn = NULL;
 		if (filter->pixelBufferPool) {
-			CVReturn err = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault,
-									  filter->pixelBufferPool,
+			CVReturn err = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, filter->pixelBufferPool,
 									  &pixelBufferIn);
 			if (err == kCVReturnSuccess && pixelBufferIn) {
 				CVPixelBufferLockBaseAddress(pixelBufferIn, 0);
@@ -217,8 +212,7 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 					memcpy(dst, data, (size_t)linesize * height);
 				} else {
 					for (uint32_t r = 0; r < height; r++) {
-						memcpy((uint8_t *)dst + r * dst_bytes_per_row,
-						       data + r * linesize,
+						memcpy((uint8_t *)dst + r * dst_bytes_per_row, data + r * linesize,
 						       linesize);
 					}
 				}
@@ -227,9 +221,8 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 		}
 
 		if (!pixelBufferIn) {
-			CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height,
-						     kCVPixelFormatType_32BGRA, data, linesize,
-						     nil, nil, nil, &pixelBufferIn);
+			CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA,
+						     data, linesize, nil, nil, nil, &pixelBufferIn);
 		}
 
 		gs_stagesurface_unmap(filter->cached_stagesurf);
@@ -240,8 +233,9 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 			dispatch_async(filter->mask_queue, ^{
 				req.qualityLevel = qLevel;
 				NSDictionary *empty = [[NSDictionary alloc] init];
-				VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixelBufferIn
-													      options:empty];
+				VNImageRequestHandler *handler = [[VNImageRequestHandler alloc]
+					initWithCVPixelBuffer:pixelBufferIn
+						      options:empty];
 				NSArray *requests = [[NSArray alloc] initWithObjects:req, nil];
 				[handler performRequests:requests error:nil];
 
@@ -287,8 +281,7 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 	CVPixelBufferLockBaseAddress(currentMaskPB, kCVPixelBufferLock_ReadOnly);
 	const uint8_t *base_address = (const uint8_t *)CVPixelBufferGetBaseAddress(currentMaskPB);
 
-	if (!filter->mask_texture || filter->mask_texture_width != mask_w ||
-	    filter->mask_texture_height != mask_h) {
+	if (!filter->mask_texture || filter->mask_texture_width != mask_w || filter->mask_texture_height != mask_h) {
 		if (filter->mask_texture)
 			gs_texture_destroy(filter->mask_texture);
 		filter->mask_texture = gs_texture_create(mask_w, mask_h, GS_A8, 1, &base_address, 0);
@@ -332,7 +325,8 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 				}
 			}
 			if (filter->ring_buffer[best_idx].render) {
-				gs_texture_t *fallback_tex = gs_texrender_get_texture(filter->ring_buffer[best_idx].render);
+				gs_texture_t *fallback_tex =
+					gs_texrender_get_texture(filter->ring_buffer[best_idx].render);
 				if (fallback_tex)
 					render_source_texture = fallback_tex;
 			}
@@ -345,7 +339,8 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 			bool found = false;
 			for (size_t i = 0; i < RING_BUFFER_SIZE; i++) {
 				if (filter->ring_buffer[i].valid && filter->ring_buffer[i].frame_id == target_id) {
-					gs_texture_t *delayed_tex = gs_texrender_get_texture(filter->ring_buffer[i].render);
+					gs_texture_t *delayed_tex =
+						gs_texrender_get_texture(filter->ring_buffer[i].render);
 					if (delayed_tex) {
 						render_source_texture = delayed_tex;
 						found = true;
@@ -354,9 +349,11 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
 				}
 			}
 			if (!found) {
-				size_t target_slot = (current_slot + RING_BUFFER_SIZE - (delay % RING_BUFFER_SIZE)) % RING_BUFFER_SIZE;
+				size_t target_slot = (current_slot + RING_BUFFER_SIZE - (delay % RING_BUFFER_SIZE)) %
+						     RING_BUFFER_SIZE;
 				if (filter->ring_buffer[target_slot].valid && filter->ring_buffer[target_slot].render) {
-					gs_texture_t *delayed_tex = gs_texrender_get_texture(filter->ring_buffer[target_slot].render);
+					gs_texture_t *delayed_tex =
+						gs_texrender_get_texture(filter->ring_buffer[target_slot].render);
 					if (delayed_tex)
 						render_source_texture = delayed_tex;
 				}
@@ -459,7 +456,8 @@ static void vision_destroy(void *filter_ptr)
 		return;
 
 	if (filter->mask_queue) {
-		dispatch_sync(filter->mask_queue, ^{});
+		dispatch_sync(filter->mask_queue, ^{
+			      });
 		dispatch_release(filter->mask_queue);
 	}
 
@@ -519,4 +517,3 @@ bool obs_module_load(void)
 	blog(LOG_INFO, "Loaded successfully (version %s)", PLUGIN_VERSION);
 	return true;
 }
-
