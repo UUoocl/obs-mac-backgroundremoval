@@ -69,20 +69,13 @@ if (( ! (${skips[(Ie)all]}  + ${skips[(Ie)deps]}) )) {
 
     case ${dependency} {
       prebuilt)
-        _filename="macos-deps-${deps_version}-${target##*-}.tar.xz"
+        _filename="macos-deps-${deps_version}-universal.tar.xz"
         _url="${deps_baseurl}/${deps_version}/${_filename}"
         _target="plugin-deps-${deps_version}-qt${QT_VERSION}-${target##*-}"
         typeset -g OBS_DEPS_VERSION=${deps_version}
         ;;
       qt*)
-        if (( ${+CI} )) {
-          _filename="macos-deps-qt${QT_VERSION}-${deps_version}-universal.tar.xz"
-          deps_hash="$(jq -r --arg dependency "${dependency}" \
-            '.dependencies[$dependency].hashes["macos-universal"]' \
-            ${buildspec_file})"
-        } else {
-          _filename="macos-deps-qt${QT_VERSION}-${deps_version}-${target##*-}.tar.xz"
-        }
+        _filename="macos-deps-qt${QT_VERSION}-${deps_version}-universal.tar.xz"
         _url="${deps_baseurl}/${deps_version}/${_filename}"
         _target="plugin-deps-${deps_version}-qt${QT_VERSION}-${target##*-}"
         ;;

@@ -7,14 +7,14 @@
             "hash": "fc546137470c0f4a5f1493b6e7815545ee1b170b"
         },
         "prebuilt": {
-            "version": "2022-08-02",
+            "version": "2025-07-11",
             "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-built obs-deps",
             "hashes": {
-                "macos-x86_64": "7637e52305e6fc53014b5aabd583f1a4490b1d97450420e977cae9a336a29525",
-                "macos-arm64": "755e0fa69b17a3ae444e1befa9d91d77e3cafe628fbd1c6333686091826595cd",
-                "macos-universal": "de057e73e6fe0825664c258ca2dd6798c41ae580bf4d896e1647676a4941934a",
-                "windows-x64": "2192d8ce780c4281b807cd457994963669e5202659ecd92f19b54c3e7d0c1915",
+                "macos-x86_64": "495687e63383d1a287684b6e2e9bfe246bb8f156fe265926afb1a325af1edd2a",
+                "macos-arm64": "495687e63383d1a287684b6e2e9bfe246bb8f156fe265926afb1a325af1edd2a",
+                "macos-universal": "495687e63383d1a287684b6e2e9bfe246bb8f156fe265926afb1a325af1edd2a",
+                "windows-x64": "c8c642c1070dc31ce9a0f1e4cef5bb992f4bff4882255788b5da12129e85caa7",
                 "windows-x86": "9f8582ab5891b000869d6484ea591add9fbac9f1c91b56c7b85fdfd56a261c1b"
             }
         },
@@ -35,14 +35,14 @@
             }
         },
         "qt6": {
-            "version": "2022-08-02",
+            "version": "2025-07-11",
             "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-built Qt6",
             "hashes": {
-                "macos-x86_64": "a83f72a11023b03b6cb2dc365f0a66ad9df31163bbb4fe2df32d601856a9fad3",
-                "macos-arm64": "2f30af90c049670a5660656adbb440668aa1b0567f75a5f29e1def9108928403",
-                "macos-universal": "252e6684f43ab9c6f262c73af739e2296ce391b998da2c4ee04c254aaa07db18",
-                "windows-x64": "e5509b54196a3f935250cc4b9c54160c8e588fd0f92bc078a2a64f9d9e2e4e93",
+                "macos-x86_64": "d3f5f04b6ea486e032530bdf0187cbda9a54e0a49621a4c8ba984c5023998867",
+                "macos-arm64": "d3f5f04b6ea486e032530bdf0187cbda9a54e0a49621a4c8ba984c5023998867",
+                "macos-universal": "d3f5f04b6ea486e032530bdf0187cbda9a54e0a49621a4c8ba984c5023998867",
+                "windows-x64": "0e76bf0555dd5382838850b748d3dcfab44a1e1058441309ab54e1a65b156d0a",
                 "windows-x86": "24fc03bef153a0e027c1479e42eb08097a4ea1d70a4710825be0783d0626cb0d"
             },
             "pdb-hashes": {
