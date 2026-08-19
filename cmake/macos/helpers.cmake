@@ -25,9 +25,9 @@ function(set_target_properties_plugin target)
       BUNDLE TRUE
       BUNDLE_EXTENSION plugin
       XCODE_ATTRIBUTE_PRODUCT_NAME ${target}
-      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${MACOS_BUNDLEID}
-      XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION ${PLUGIN_BUILD_NUMBER}
-      XCODE_ATTRIBUTE_MARKETING_VERSION ${PLUGIN_VERSION}
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${MACOS_BUNDLEID}"
+      XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION "${PLUGIN_BUILD_NUMBER}"
+      XCODE_ATTRIBUTE_MARKETING_VERSION "${PLUGIN_VERSION}"
       XCODE_ATTRIBUTE_GENERATE_INFOPLIST_FILE YES
       XCODE_ATTRIBUTE_INFOPLIST_FILE ""
       XCODE_ATTRIBUTE_INFOPLIST_KEY_CFBundleDisplayName ${target}
@@ -65,7 +65,7 @@ function(set_target_properties_plugin target)
   source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "UI Files" FILES ${target_ui_files})
 
   install(TARGETS ${target} LIBRARY DESTINATION .)
-  install(FILES "$<TARGET_BUNDLE_DIR:${target}>.dsym" CONFIGURATIONS Release DESTINATION . OPTIONAL)
+  install(FILES "$<TARGET_BUNDLE_DIR:${target}>.dSYM" CONFIGURATIONS Release RelWithDebInfo DESTINATION . OPTIONAL)
 
   configure_file(cmake/macos/resources/distribution.in "${CMAKE_CURRENT_BINARY_DIR}/distribution" @ONLY)
   configure_file(cmake/macos/resources/create-package.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/create-package.cmake" @ONLY)

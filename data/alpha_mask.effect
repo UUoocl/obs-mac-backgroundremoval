@@ -1,6 +1,6 @@
 uniform float4x4 ViewProj;
 uniform texture2d image;
-
+uniform texture2d source_image;
 uniform texture2d mask;
 uniform float threshold;
 
@@ -29,8 +29,10 @@ VertData VSDefault(VertData v_in)
 
 float4 PSMask(FragData f_in) : TARGET
 {
-	float4 rgba = image.Sample(texSampler, f_in.uv);
-	rgba *= smoothstep(threshold - 0.1,threshold,mask.Sample(texSampler, f_in.uv).a);
+	float4 rgba = source_image.Sample(texSampler, f_in.uv);
+	float mask_val = mask.Sample(texSampler, f_in.uv).a;
+	float lower_bound = max(0.0, threshold - 0.2);
+	rgba *= smoothstep(lower_bound, threshold, mask_val);
 	return rgba;
 }
 

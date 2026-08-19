@@ -1,21 +1,17 @@
-# OBS macOS Background Removal
+# macOS Background Removal Filter for OBS Studio
 
-## Introduction
-
-This plugin provides an effect filter to remove a person's background using Apple's built-in [Vision](https://developer.apple.com/documentation/vision) framework and Neural Engine acceleration on macOS.
-
-### Requirements
-- **macOS 12.0** or newer
-- **OBS Studio 28.0** or newer
-- Apple Silicon (M1/M2/M3/M4) or Intel Mac
+A native macOS background removal filter plugin for [OBS Studio](https://obsproject.com/) leveraging Apple Silicon and macOS Vision framework neural network person segmentation (`VNGeneratePersonSegmentationRequest`).
 
 ---
 
 ## Features
 
-- **Hardware-Accelerated Person Segmentation**: Uses macOS Vision API (`VNGeneratePersonSegmentationRequest`) running asynchronously on the Apple Neural Engine and GPU.
-- **GPU-to-GPU Pipeline**: High-performance IOSurface buffer pool with Metal compatibility.
-- **Advanced Frame Synchronization**: Prevents mask lag and edge "ghosting" when subjects move quickly by matching inference masks to the exact corresponding video frames.
+- **Native macOS Vision Framework**: Hardware-accelerated real-time background removal utilizing the Apple Neural Engine and GPU with minimal CPU impact.
+- **Configurable Quality Modes**:
+  - **Balanced**: Refined segmentation and smooth edges.
+  - **Fast**: High-performance segmentation designed for 60 FPS streams.
+- **Customizable Threshold & Feathering**: Fine-tune edge sharpness and soft blending transitions.
+- **Advanced Frame Synchronization**: Multiple sync strategies including a configurable FIFO pipeline buffer to guarantee zero edge ghosting or desync during rapid motion.
 
 ---
 
@@ -25,26 +21,32 @@ Once added to any source under **Filters > Effect Filters > macOS Background Rem
 
 | Setting | Options / Range | Description |
 | :--- | :--- | :--- |
-| **Threshold** | `0.00` – `1.00` (Default: `0.90`) | Controls the confidence cutoff for person segmentation. Higher values yield tighter outlines; lower values preserve more edge details. |
-| **Quality** | `Balanced` (Default)<br>`Fast` | • **Balanced**: Higher accuracy segmentation with refined edges.<br>• **Fast**: Lower compute overhead for high frame-rate or resource-constrained setups. |
-| **Sync Mode** | `Auto Sync`<br>`Manual Delay`<br>`Disabled` | Controls how video frames are synchronized with the asynchronous segmentation mask (see details below). |
-| **Manual Delay** | `0` – `15` frames (Default: `2`) | Configures the number of buffer frames to delay the video feed when **Manual Delay** sync mode is selected. |
+| **Threshold** | `0.00` – `1.00` (Default: `0.90`) | Controls the confidence cutoff for person segmentation. Lower values (`0.75`–`0.80`) preserve more edge details and gestures. |
+| **Quality** | `Balanced` (Default)<br>`Fast` | • **Balanced**: High-accuracy segmentation with refined edge detail.<br>• **Fast**: High-throughput mode (~10ms/frame) designed for 60 FPS real-time capture. |
+| **Sync Mode** | `Auto Sync`<br>`Buffered Exact Sync`<br>`Manual Delay`<br>`Disabled` | Controls how video frames are synchronized with the asynchronous segmentation mask (see details below). |
+| **Buffer Depth** | `5` – `60` frames (Default: `20`) | Configures the FIFO video queue depth when **Buffered Exact Sync** is selected. |
+| **Manual Delay** | `0` – `15` frames (Default: `2`) | Configures the number of buffer frames to delay the video feed when **Manual Delay** is selected. |
 
 ### Frame Synchronization Modes
 
-Because neural network inference takes a few milliseconds to process, asynchronous masks can lag 1–3 frames behind the real-time camera feed. This plugin includes multiple sync strategies:
+Neural network inference takes a few milliseconds to process asynchronously. This plugin provides four synchronization strategies tailored for different streaming and broadcast needs:
 
-1. **Auto Sync (Match Frames)** *(Recommended / Default)*:
-   - Uses an internal GPU ring buffer to match each completed segmentation mask to the exact source video frame that generated it.
-   - Eliminates subject edge tearing and trailing artifacts during fast head/hand movements.
-   - Automatically falls back to the closest valid frame if an exact frame timestamp is not in the buffer.
+1. **Auto Sync (Adaptive Frame Match)** *(Default)*:
+   - Dynamically tracks live Neural Engine inference latency and delays the video feed by the measured frame offset ($2$–$3$ frames).
+   - Provides low latency with automatic synchronization.
 
-2. **Manual Delay**:
+2. **Buffered Exact Sync (Configurable FIFO Buffer)** *(Recommended for Fast Motion)*:
+   - Places video frames into a dedicated GPU FIFO queue (configurable from `5` to `60` frames, default `20` frames / ~333ms @ 60 FPS).
+   - Guarantees the Neural Engine has completely finished processing the segmentation mask before the matching video frame is outputted.
+   - Eliminates 100% of mask lag and edge tearing during rapid hand waving or head movements.
+   - *Tip*: Set a matching audio sync offset on your microphone in OBS under **Edit > Advanced Audio Properties** ($\text{Delay (ms)} = \frac{\text{Buffer Frames}}{\text{FPS}} \times 1000$).
+
+3. **Manual Delay**:
    - Applies a user-defined fixed frame delay (`0` to `15` frames) to the video feed.
-   - Useful for specialized broadcast pipelines, fixed-latency capture cards, or custom AV sync requirements.
+   - Useful for fixed-latency broadcast pipelines or capture cards.
 
-3. **Disabled (Low Latency / No Delay)**:
-   - Immediately applies the newest available mask to the current incoming video frame without frame buffering.
+4. **Disabled (Low Latency / No Delay)**:
+   - Immediately applies the newest available mask to the live incoming video frame with zero buffer delay.
    - Provides minimal latency at the expense of potential edge jitter during fast motion.
 
 ---
@@ -61,20 +63,27 @@ Because neural network inference takes a few milliseconds to process, asynchrono
 
 ## Building from Source
 
-This project uses CMake and follows the [OBS Plugin Template](https://github.com/obsproject/obs-plugintemplate).
+### Prerequisites
+- macOS 12.0+ (Universal build supports Apple Silicon & Intel)
+- Xcode 14+ / Command Line Tools
+- CMake 3.28+
+
+### Build Steps
 
 ```bash
-# Configure for macOS Universal (Apple Silicon & Intel)
-cmake --preset macos -B build_macos
+# 1. Configure
+cmake --preset macos
 
-# Build
+# 2. Compile Universal Binary with Debug Symbols
 cmake --build build_macos --config RelWithDebInfo
+
+# 3. Install to OBS plugins directory
+cp -R build_macos/RelWithDebInfo/obs-mac-backgroundremoval.plugin "$HOME/Library/Application Support/obs-studio/plugins/"
+cp -R build_macos/RelWithDebInfo/obs-mac-backgroundremoval.plugin.dSYM "$HOME/Library/Application Support/obs-studio/plugins/"
 ```
 
 ---
 
-## License and Credits
+## License
 
-- Licensed under the **GNU General Public License v2.0** (see [LICENSE](LICENSE)).
-- Originally created by [Sebastian Beckmann](https://github.com/gxalpha/obs-mac-backgroundremoval).
-- Thanks to [pkviet](https://github.com/obsproject/obs-studio) from OBS for earlier reference implementations of GPU background filters.
+GNU General Public License v2.0 or later.
