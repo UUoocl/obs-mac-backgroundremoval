@@ -43,7 +43,7 @@ jobs:
 
   macos_build:
     name: 02 - macOS
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       fail-fast: true
       matrix:
