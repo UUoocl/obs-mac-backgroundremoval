@@ -126,8 +126,8 @@ if (( ! (${skips[(Ie)all]} + ${skips[(Ie)build]}) )) {
   local -a cmake_args=()
   if (( _loglevel > 1 )) cmake_args+=(--verbose)
   if [[ ${generator} == 'Unix Makefiles' ]] cmake_args+=(--parallel ${num_procs})
-  cmake --build plugin_build_${target##*-} --config ${BUILD_CONFIG:-Release} ${cmake_args} -t obs-frontend-api
-  cmake --install plugin_build_${target##*-} --config ${BUILD_CONFIG:-Release} --component obs_libraries ${cmake_args}
+  cmake --build plugin_build_${target##*-} --config ${BUILD_CONFIG:-Release} ${cmake_args}
+  cmake --install plugin_build_${target##*-} --config ${BUILD_CONFIG:-Release} ${cmake_args}
 }
 
 popd
