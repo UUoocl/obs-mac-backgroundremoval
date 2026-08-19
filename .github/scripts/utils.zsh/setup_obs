@@ -1,5 +1,7 @@
 autoload -Uz log_error log_info log_status
-export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+if [[ -z "${DEVELOPER_DIR:-}" ]] && (( ${+commands[xcode-select]} )); then
+  export DEVELOPER_DIR="$(xcode-select -p 2>/dev/null)"
+fi
 
 if (( ! ${+buildspec_file} )) {
   log_error "'buildspec_file' not set. Please set before running ${0}."

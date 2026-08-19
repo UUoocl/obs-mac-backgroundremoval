@@ -31,7 +31,9 @@ _trap_error() {
 }
 
 build() {
-  export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+  if [[ -z "${DEVELOPER_DIR:-}" ]] && (( ${+commands[xcode-select]} )); then
+    export DEVELOPER_DIR="$(xcode-select -p 2>/dev/null)"
+  fi
   if (( ! ${+SCRIPT_HOME} )) typeset -g SCRIPT_HOME=${ZSH_ARGZERO:A:h}
   local host_os=${${(s:-:)ZSH_ARGZERO:t:r}[2]}
   local target="${host_os}-${CPUTYPE}"
