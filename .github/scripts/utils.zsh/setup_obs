@@ -68,6 +68,10 @@ if (( ! (${skips[(Ie)all]} + ${skips[(Ie)unpack]}) )) {
 
   git submodule foreach --recursive git submodule sync
   git submodule update --init --recursive
+
+  if [[ -f cmake/macos/compilerconfig.cmake ]]; then
+    sed -i '' -e 's/check_sdk_requirements()/# check_sdk_requirements()/g' cmake/macos/compilerconfig.cmake 2>/dev/null || true
+  fi
 }
 
 if (( ! (${skips[(Ie)all]} + ${skips[(Ie)build]}) )) {
