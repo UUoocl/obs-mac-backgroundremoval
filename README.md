@@ -86,4 +86,4 @@ cp -R build_macos/RelWithDebInfo/obs-mac-backgroundremoval.plugin.dSYM "$HOME/Li
 
 ## License
 
-GNU General Public License v2.0 or later.
+GNU General Public License v2.0 or later. 
