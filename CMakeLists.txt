@@ -16,10 +16,7 @@ add_library(${CMAKE_PROJECT_NAME} MODULE)
 find_package(libobs REQUIRED)
 target_link_libraries(
   ${CMAKE_PROJECT_NAME}
-  PRIVATE OBS::libobs
-          "-framework CoreFoundation"
-          "-framework Vision"
-          "-framework CoreVideo"
+  PRIVATE OBS::libobs "-framework CoreFoundation" "-framework Vision" "-framework CoreVideo"
 )
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-main.m)
