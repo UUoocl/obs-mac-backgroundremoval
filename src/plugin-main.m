@@ -279,7 +279,7 @@ static void vision_render(void *filter_ptr, gs_effect_t *unused_effect)
     if (!filter->mask_texture || filter->mask_texture_width != mask_w || filter->mask_texture_height != mask_h) {
         if (filter->mask_texture)
             gs_texture_destroy(filter->mask_texture);
-        filter->mask_texture = gs_texture_create(mask_w, mask_h, GS_A8, 1, &base_address, 0);
+        filter->mask_texture = gs_texture_create(mask_w, mask_h, GS_A8, 1, &base_address, GS_DYNAMIC);
         filter->mask_texture_width = mask_w;
         filter->mask_texture_height = mask_h;
     } else {
