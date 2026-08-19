@@ -95,7 +95,7 @@ if (( ! (${skips[(Ie)all]} + ${skips[(Ie)build]}) )) {
       }
 
       cmake_args+=(
-        -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+        -DCMAKE_OSX_SYSROOT=macosx
         -DCMAKE_OSX_ARCHITECTURES=${${target##*-}//universal/x86_64;arm64}
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET:-12.0}
         -DOBS_CODESIGN_LINKER=ON
@@ -112,7 +112,9 @@ if (( ! (${skips[(Ie)all]} + ${skips[(Ie)build]}) )) {
   }
 
   log_debug "Attempting to configure OBS with CMake arguments: ${cmake_args}"
-  cmake -S . -B plugin_build_${target##*-} -G ${generator} ${cmake_args}
+  local obs_generator="${${host_os:#'macos'}:+${generator}}"
+  obs_generator="${obs_generator:-Xcode}"
+  cmake -S . -B plugin_build_${target##*-} -G ${obs_generator} ${cmake_args}
 
   log_info 'Building libobs and obs-frontend-api...'
   local -a cmake_args=()

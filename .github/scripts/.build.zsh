@@ -63,7 +63,7 @@ build() {
   local -r -a _valid_configs=(Debug RelWithDebInfo Release MinSizeRel)
   if [[ ${host_os} == 'macos' ]] {
     local -r -a _valid_generators=(Xcode Ninja 'Unix Makefiles')
-    local generator="${${CI:+Ninja}:-Xcode}"
+    local generator='Xcode'
   } else {
     local -r -a _valid_generators=(Ninja 'Unix Makefiles')
     local generator='Ninja'
@@ -230,7 +230,7 @@ Usage: %B${functrace[1]%:*}%b <option> [<options>]
         }
 
         cmake_args+=(
-          -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+          -DCMAKE_OSX_SYSROOT=macosx
           -DCMAKE_FRAMEWORK_PATH="${_plugin_deps}/Frameworks"
           -DCMAKE_OSX_ARCHITECTURES=${${target##*-}//universal/x86_64;arm64}
           -DCMAKE_OSX_DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET:-12.0}
