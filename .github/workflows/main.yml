@@ -16,6 +16,9 @@ on:
       - master
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   clang_check:
     name: 01 - Code Format Check
@@ -52,7 +55,7 @@ jobs:
     env:
       CODESIGN_IDENT: '-'
       CODESIGN_IDENT_INSTALLER: ''
-      MACOSX_DEPLOYMENT_TARGET: '12.0'
+      MACOSX_DEPLOYMENT_TARGET: '13.0'
     defaults:
       run:
         shell: zsh {0}
@@ -129,7 +132,7 @@ jobs:
 
       - name: Install Apple Developer Certificate
         if: ${{ github.event_name != 'pull_request' && steps.setup.outputs.haveCodesignIdent == 'true' }}
-        uses: apple-actions/import-codesign-certs@253ddeeac23f2bdad1646faac5c8c2832e800071
+        uses: apple-actions/import-codesign-certs@v3
         with:
           keychain-password: ${{ github.run_id }}
           p12-file-base64: ${{ secrets.MACOS_SIGNING_CERT }}
