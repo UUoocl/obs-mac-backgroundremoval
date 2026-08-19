@@ -17,7 +17,7 @@ find_package(libobs REQUIRED)
 target_link_libraries(
   ${CMAKE_PROJECT_NAME}
   PRIVATE OBS::libobs
-          CoreFoundation
+          "-framework CoreFoundation"
           "-framework Vision"
           "-framework CoreVideo"
 )
